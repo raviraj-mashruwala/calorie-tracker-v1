@@ -1,250 +1,380 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CalorieTracker Pro</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-    <header class="header">
-        <div class="container">
-            <h1>CalorieTracker Pro</h1>
-            <div class="header-controls">
-                <select id="profileSelector" class="form-control">
-                    <option value="">Select Profile</option>
-                </select>
-                <button id="createProfileBtn" class="btn btn--primary">Create Profile</button>
-            </div>
+  </head>
+  <body>
+    <!-- Authentication Section -->
+    <div id="authContainer" class="auth-container" style="display: none">
+      <div class="container">
+        <div class="auth-form">
+          <h2>Sign In to CalorieTracker Pro</h2>
+          <div class="form-group">
+            <input
+              id="emailInput"
+              type="email"
+              class="form-control"
+              placeholder="Email"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <input
+              id="passwordInput"
+              type="password"
+              class="form-control"
+              placeholder="Password"
+              required
+            />
+          </div>
+          <div class="form-actions">
+            <button id="signInBtn" class="btn btn--primary">Sign In</button>
+            <button id="signUpBtn" class="btn btn--secondary">Sign Up</button>
+          </div>
+          <div
+            id="authError"
+            class="status status--error"
+            style="display: none"
+          ></div>
         </div>
-    </header>
+      </div>
+    </div>
 
-    <nav class="navigation">
+    <!-- MAIN APP UI -->
+    <div id="appContainer" style="display: none">
+      <header class="header">
         <div class="container">
-            <ul class="nav-list">
-                <li><button class="nav-btn active" data-tab="dashboard">Dashboard</button></li>
-                <li><button class="nav-btn" data-tab="food">Food Log</button></li>
-                <li><button class="nav-btn" data-tab="exercise">Exercise</button></li>
-                <li><button class="nav-btn" data-tab="ingredients">Ingredients</button></li>
-                <li><button class="nav-btn" data-tab="summary">Summary</button></li>
-                <li><button class="nav-btn" data-tab="profiles">Profiles</button></li>
-            </ul>
+          <h1>CalorieTracker Pro</h1>
+          <div class="header-controls">
+            <select id="profileSelector" class="form-control">
+              <option value="">Select Profile</option>
+            </select>
+            <button id="createProfileBtn" class="btn btn--primary">
+              Create Profile
+            </button>
+            <button id="signOutBtn" class="btn btn--secondary">Sign Out</button>
+          </div>
         </div>
-    </nav>
+      </header>
 
-    <main class="main">
+      <nav class="navigation">
         <div class="container">
-            <!-- Dashboard Tab -->
-            <section id="dashboard" class="tab-content active">
-                <div class="dashboard-grid">
-                    <div class="card">
-                        <div class="card__body">
-                            <h3>Today's Overview</h3>
-                            <div class="metrics-grid">
-                                <div class="metric">
-                                    <span class="metric-label">BMR</span>
-                                    <span class="metric-value" id="bmrValue">--</span>
-                                    <span class="metric-unit">kcal</span>
-                                </div>
-                                <!-- <div class="metric">
+          <ul class="nav-list">
+            <li>
+              <button class="nav-btn active" data-tab="dashboard">
+                Dashboard
+              </button>
+            </li>
+            <li><button class="nav-btn" data-tab="food">Food Log</button></li>
+            <li>
+              <button class="nav-btn" data-tab="exercise">Exercise</button>
+            </li>
+            <li>
+              <button class="nav-btn" data-tab="ingredients">
+                Ingredients
+              </button>
+            </li>
+            <li><button class="nav-btn" data-tab="summary">Summary</button></li>
+            <li>
+              <button class="nav-btn" data-tab="profiles">Profiles</button>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main">
+        <div class="container">
+          <!-- Dashboard Tab -->
+          <section id="dashboard" class="tab-content active">
+            <div class="dashboard-grid">
+              <div class="card">
+                <div class="card__body">
+                  <h3>Today's Overview</h3>
+                  <div class="metrics-grid">
+                    <div class="metric">
+                      <span class="metric-label">BMR</span>
+                      <span class="metric-value" id="bmrValue">--</span>
+                      <span class="metric-unit">kcal</span>
+                    </div>
+                    <!-- <div class="metric">
                                     <span class="metric-label">TDEE</span>
                                     <span class="metric-value" id="tdeeValue">--</span>
                                     <span class="metric-unit">kcal</span>
                                 </div> -->
-                                <div class="metric">
-                                    <span class="metric-label">Consumed</span>
-                                    <span class="metric-value" id="consumedValue">0</span>
-                                    <span class="metric-unit">kcal</span>
-                                </div>
-                                <div class="metric">
-                                    <span class="metric-label">Burned</span>
-                                    <span class="metric-value" id="burnedValue">0</span>
-                                    <span class="metric-unit">kcal</span>
-                                </div>
-                                <div class="metric">
-                                    <span class="metric-label">Net</span>
-                                    <span class="metric-value" id="netValue">0</span>
-                                    <span class="metric-unit">kcal</span>
-                                </div>
-                            </div>
-                            <!-- <div class="progress-section">
+                    <div class="metric">
+                      <span class="metric-label">Consumed</span>
+                      <span class="metric-value" id="consumedValue">0</span>
+                      <span class="metric-unit">kcal</span>
+                    </div>
+                    <div class="metric">
+                      <span class="metric-label">Burned</span>
+                      <span class="metric-value" id="burnedValue">0</span>
+                      <span class="metric-unit">kcal</span>
+                    </div>
+                    <div class="metric">
+                      <span class="metric-label">Net</span>
+                      <span class="metric-value" id="netValue">0</span>
+                      <span class="metric-unit">kcal</span>
+                    </div>
+                  </div>
+                  <!-- <div class="progress-section">
                                 <label>Calorie Progress</label>
                                 <div class="progress-bar">
                                     <div class="progress-fill" id="calorieProgress" style="width: 0%;"></div>
                                 </div>
                                 <span class="progress-text" id="progressText">0% of TDEE</span>
                             </div> -->
-                        </div>
-                    </div>
-                    
-                    <div class="card">
-                        <div class="card__body">
-                            <h3>Quick Actions</h3>
-                            <div class="quick-actions">
-                                <button class="btn btn--secondary btn--full-width" id="quickAddFoodBtn">Add Food</button>
-                                <button class="btn btn--secondary btn--full-width" id="quickAddExerciseBtn">Add Exercise</button>
-                                <button class="btn btn--secondary btn--full-width" id="quickBuildFoodBtn">Build Custom Food</button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
-            </section>
+              </div>
 
-            <!-- Food Log Tab -->
-            <section id="food" class="tab-content">
-                <div class="section-header">
-                    <h2>Food Log</h2>
-                    <div class="food-action-buttons">
-                        <button class="btn btn--secondary" id="buildFoodBtn">Build Custom Food</button>
-                        <button class="btn btn--primary" id="addFoodBtn">Add Simple Food</button>
-                    </div>
+              <div class="card">
+                <div class="card__body">
+                  <h3>Quick Actions</h3>
+                  <div class="quick-actions">
+                    <button
+                      class="btn btn--secondary btn--full-width"
+                      id="quickAddFoodBtn"
+                    >
+                      Add Food
+                    </button>
+                    <button
+                      class="btn btn--secondary btn--full-width"
+                      id="quickAddExerciseBtn"
+                    >
+                      Add Exercise
+                    </button>
+                    <button
+                      class="btn btn--secondary btn--full-width"
+                      id="quickBuildFoodBtn"
+                    >
+                      Build Custom Food
+                    </button>
+                  </div>
                 </div>
-                
-                <div class="date-selector">
-                    <input type="date" id="foodDate" class="form-control" />
-                </div>
+              </div>
+            </div>
+          </section>
 
-                <div class="meals-container">
-                    <div class="meal-section">
-                        <h3>Breakfast</h3>
-                        <div class="meal-items" id="breakfastItems">
-                            <div class="empty-state">No breakfast items logged</div>
-                        </div>
-                        <div class="meal-total">Total: <span id="breakfastTotal">0 kcal</span></div>
-                    </div>
-                    <div class="meal-section">
-                        <h3>Lunch</h3>
-                        <div class="meal-items" id="lunchItems">
-                            <div class="empty-state">No lunch items logged</div>
-                        </div>
-                        <div class="meal-total">Total: <span id="lunchTotal">0 kcal</span></div>
-                    </div>
-                    <div class="meal-section">
-                        <h3>Dinner</h3>
-                        <div class="meal-items" id="dinnerItems">
-                            <div class="empty-state">No dinner items logged</div>
-                        </div>
-                        <div class="meal-total">Total: <span id="dinnerTotal">0 kcal</span></div>
-                    </div>
-                    <div class="meal-section">
-                        <h3>Snacks</h3>
-                        <div class="meal-items" id="snackItems">
-                            <div class="empty-state">No snacks logged</div>
-                        </div>
-                        <div class="meal-total">Total: <span id="snackTotal">0 kcal</span></div>
-                    </div>
-                </div>
-            </section>
+          <!-- Food Log Tab -->
+          <section id="food" class="tab-content">
+            <div class="section-header">
+              <h2>Food Log</h2>
+              <div class="food-action-buttons">
+                <button class="btn btn--secondary" id="buildFoodBtn">
+                  Build Custom Food
+                </button>
+                <button class="btn btn--primary" id="addFoodBtn">
+                  Add Simple Food
+                </button>
+              </div>
+            </div>
 
-            <!-- Exercise Tab -->
-            <section id="exercise" class="tab-content">
-                <div class="section-header">
-                    <h2>Exercise Log</h2>
-                    <button class="btn btn--primary" id="addExerciseBtn">Add Exercise</button>
-                </div>
-                
-                <div class="date-selector">
-                    <input type="date" id="exerciseDate" class="form-control" />
-                </div>
+            <div class="date-selector">
+              <input type="date" id="foodDate" class="form-control" />
+            </div>
 
-                <div class="exercise-list" id="exerciseList">
-                    <div class="empty-state">No exercises logged today</div>
+            <div class="meals-container">
+              <div class="meal-section">
+                <h3>Breakfast</h3>
+                <div class="meal-items" id="breakfastItems">
+                  <div class="empty-state">No breakfast items logged</div>
                 </div>
-                <div class="exercise-total">
-                    <strong>Total Calories Burned: <span id="totalBurned">0</span> kcal</strong>
+                <div class="meal-total">
+                  Total: <span id="breakfastTotal">0 kcal</span>
                 </div>
-            </section>
+              </div>
+              <div class="meal-section">
+                <h3>Lunch</h3>
+                <div class="meal-items" id="lunchItems">
+                  <div class="empty-state">No lunch items logged</div>
+                </div>
+                <div class="meal-total">
+                  Total: <span id="lunchTotal">0 kcal</span>
+                </div>
+              </div>
+              <div class="meal-section">
+                <h3>Dinner</h3>
+                <div class="meal-items" id="dinnerItems">
+                  <div class="empty-state">No dinner items logged</div>
+                </div>
+                <div class="meal-total">
+                  Total: <span id="dinnerTotal">0 kcal</span>
+                </div>
+              </div>
+              <div class="meal-section">
+                <h3>Snacks</h3>
+                <div class="meal-items" id="snackItems">
+                  <div class="empty-state">No snacks logged</div>
+                </div>
+                <div class="meal-total">
+                  Total: <span id="snackTotal">0 kcal</span>
+                </div>
+              </div>
+            </div>
+          </section>
 
-            <!-- Ingredients Tab -->
-            <section id="ingredients" class="tab-content">
-                <div class="section-header">
-                    <h2>Ingredient Database</h2>
-                    <button class="btn btn--primary" id="addIngredientBtn">Add Ingredient</button>
-                </div>
-                
-                <div class="ingredients-grid" id="ingredientsGrid">
-                    <div class="empty-state">No custom ingredients added yet</div>
-                </div>
-            </section>
+          <!-- Exercise Tab -->
+          <section id="exercise" class="tab-content">
+            <div class="section-header">
+              <h2>Exercise Log</h2>
+              <button class="btn btn--primary" id="addExerciseBtn">
+                Add Exercise
+              </button>
+            </div>
 
-            <!-- Summary Tab -->
-            <section id="summary" class="tab-content">
-                <div class="summary-tabs">
-                    <button class="summary-tab-btn active" data-summary="daily">Daily</button>
-                    <button class="summary-tab-btn" data-summary="weekly">Weekly</button>
-                    <button class="summary-tab-btn" data-summary="monthly">Monthly</button>
-                </div>
+            <div class="date-selector">
+              <input type="date" id="exerciseDate" class="form-control" />
+            </div>
 
-                <div id="dailySummary" class="summary-content active">
-                    <h3>Daily Summary</h3>
-                    <div class="date-selector">
-                        <input type="date" id="summaryDate" class="form-control" />
-                    </div>
-                    <div class="chart-container" style="position: relative; height: 300px;">
-                        <canvas id="dailyChart"></canvas>
-                    </div>
-                </div>
+            <div class="exercise-list" id="exerciseList">
+              <div class="empty-state">No exercises logged today</div>
+            </div>
+            <div class="exercise-total">
+              <strong
+                >Total Calories Burned:
+                <span id="totalBurned">0</span> kcal</strong
+              >
+            </div>
+          </section>
 
-                <div id="weeklySummary" class="summary-content">
-                    <h3>Weekly Summary</h3>
-                    <div class="chart-container" style="position: relative; height: 300px;">
-                        <canvas id="weeklyChart"></canvas>
-                    </div>
-                </div>
+          <!-- Ingredients Tab -->
+          <section id="ingredients" class="tab-content">
+            <div class="section-header">
+              <h2>Ingredient Database</h2>
+              <button class="btn btn--primary" id="addIngredientBtn">
+                Add Ingredient
+              </button>
+            </div>
 
-                <div id="monthlySummary" class="summary-content">
-                    <h3>Monthly Summary</h3>
-                    <div class="chart-container" style="position: relative; height: 300px;">
-                        <canvas id="monthlyChart"></canvas>
-                    </div>
-                </div>
-            </section>
+            <div class="ingredients-grid" id="ingredientsGrid">
+              <div class="empty-state">No custom ingredients added yet</div>
+            </div>
+          </section>
 
-            <!-- Profiles Tab -->
-            <section id="profiles" class="tab-content">
-                <div class="section-header">
-                    <h2>Profile Management</h2>
-                    <button class="btn btn--primary" id="addProfileBtn">Add Profile</button>
-                </div>
-                
-                <div class="profiles-grid" id="profilesGrid">
-                    <div class="empty-state">No profiles created yet</div>
-                </div>
-            </section>
+          <!-- Summary Tab -->
+          <section id="summary" class="tab-content">
+            <div class="summary-tabs">
+              <button class="summary-tab-btn active" data-summary="daily">
+                Daily
+              </button>
+              <button class="summary-tab-btn" data-summary="weekly">
+                Weekly
+              </button>
+              <button class="summary-tab-btn" data-summary="monthly">
+                Monthly
+              </button>
+            </div>
+
+            <div id="dailySummary" class="summary-content active">
+              <h3>Daily Summary</h3>
+              <div class="date-selector">
+                <input type="date" id="summaryDate" class="form-control" />
+              </div>
+              <div
+                class="chart-container"
+                style="position: relative; height: 300px"
+              >
+                <canvas id="dailyChart"></canvas>
+              </div>
+            </div>
+
+            <div id="weeklySummary" class="summary-content">
+              <h3>Weekly Summary</h3>
+              <div
+                class="chart-container"
+                style="position: relative; height: 300px"
+              >
+                <canvas id="weeklyChart"></canvas>
+              </div>
+            </div>
+
+            <div id="monthlySummary" class="summary-content">
+              <h3>Monthly Summary</h3>
+              <div
+                class="chart-container"
+                style="position: relative; height: 300px"
+              >
+                <canvas id="monthlyChart"></canvas>
+              </div>
+            </div>
+          </section>
+
+          <!-- Profiles Tab -->
+          <section id="profiles" class="tab-content">
+            <div class="section-header">
+              <h2>Profile Management</h2>
+              <button class="btn btn--primary" id="addProfileBtn">
+                Add Profile
+              </button>
+            </div>
+
+            <div class="profiles-grid" id="profilesGrid">
+              <div class="empty-state">No profiles created yet</div>
+            </div>
+          </section>
         </div>
-    </main>
+      </main>
 
-    <!-- Profile Modal -->
-    <div id="profileModal" class="modal hidden">
+      <!-- Profile Modal -->
+      <div id="profileModal" class="modal hidden">
         <div class="modal-content">
-            <h3 id="profileModalTitle">Create Profile</h3>
-            <form id="profileForm">
-                <div class="form-group">
-                    <label class="form-label">Name *</label>
-                    <input type="text" id="profileName" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Gender *</label>
-                    <select id="profileGender" class="form-control" required>
-                        <option value="">Select Gender</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Age (years) *</label>
-                    <input type="number" id="profileAge" class="form-control" min="1" max="120" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Weight (kg) *</label>
-                    <input type="number" id="profileWeight" class="form-control" min="1" step="0.1" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Height (cm) *</label>
-                    <input type="number" id="profileHeight" class="form-control" min="50" max="300" required>
-                </div>
-                <!-- <div class="form-group">
+          <h3 id="profileModalTitle">Create Profile</h3>
+          <form id="profileForm">
+            <div class="form-group">
+              <label class="form-label">Name *</label>
+              <input
+                type="text"
+                id="profileName"
+                class="form-control"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Gender *</label>
+              <select id="profileGender" class="form-control" required>
+                <option value="">Select Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Age (years) *</label>
+              <input
+                type="number"
+                id="profileAge"
+                class="form-control"
+                min="1"
+                max="120"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Weight (kg) *</label>
+              <input
+                type="number"
+                id="profileWeight"
+                class="form-control"
+                min="1"
+                step="0.1"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Height (cm) *</label>
+              <input
+                type="number"
+                id="profileHeight"
+                class="form-control"
+                min="50"
+                max="300"
+                required
+              />
+            </div>
+            <!-- <div class="form-group">
                     <label class="form-label">Activity Level *</label>
                     <select id="profileActivity" class="form-control" required>
                         <option value="">Select Activity Level</option>
@@ -255,225 +385,359 @@
                         <option value="Super active">Super active (physical job + exercise)</option>
                     </select>
                 </div> -->
-                <div class="form-actions">
-                    <button type="button" class="btn btn--secondary" id="cancelProfileBtn">Cancel</button>
-                    <button type="submit" class="btn btn--primary">Save Profile</button>
-                </div>
-            </form>
+            <div class="form-actions">
+              <button
+                type="button"
+                class="btn btn--secondary"
+                id="cancelProfileBtn"
+              >
+                Cancel
+              </button>
+              <button type="submit" class="btn btn--primary">
+                Save Profile
+              </button>
+            </div>
+          </form>
         </div>
-    </div>
+      </div>
 
-    <!-- Enhanced Simple Food Modal with Autocomplete -->
-    <div id="foodModal" class="modal hidden">
+      <!-- Enhanced Simple Food Modal with Autocomplete -->
+      <div id="foodModal" class="modal hidden">
         <div class="modal-content">
-            <h3>Add Food Item</h3>
-            <form id="foodForm">
-                <div class="form-group">
-                    <label class="form-label">Food Name *</label>
-                    <div class="food-entry">
-                        <input id="foodNameInput" class="form-control food-autocomplete" placeholder="Type food name..." autocomplete="off" required>
-                        <div id="suggestions" class="autocomplete-list hidden"></div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Meal Type *</label>
-                    <select id="mealType" class="form-control" required>
-                        <option value="Breakfast">Breakfast</option>
-                        <option value="Lunch">Lunch</option>
-                        <option value="Dinner">Dinner</option>
-                        <option value="Snack">Snack</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Serving Size *</label>
-                    <div class="serving-input-group">
-                        <input type="number" id="servingSize" class="form-control" min="0.1" step="0.1" value="1" required>
-                        <select id="servingUnit" class="form-control">
-                            <option value="piece">piece</option>
-                            <option value="cup">cup</option>
-                            <option value="g">g</option>
-                            <option value="ml">ml</option>
-                            <option value="slice">slice</option>
-                            <option value="tbsp">tbsp</option>
-                            <option value="tsp">tsp</option>
-                            <option value="oz">oz</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Calories per Serving *</label>
-                    <input type="number" id="caloriesPerServing" class="form-control" min="1" required>
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn btn--secondary" id="cancelFoodBtn">Cancel</button>
-                    <button type="submit" class="btn btn--primary">Add Food</button>
-                </div>
-            </form>
+          <h3>Add Food Item</h3>
+          <form id="foodForm">
+            <div class="form-group">
+              <label class="form-label">Food Name *</label>
+              <div class="food-entry">
+                <input
+                  id="foodNameInput"
+                  class="form-control food-autocomplete"
+                  placeholder="Type food name..."
+                  autocomplete="off"
+                  required
+                />
+                <div id="suggestions" class="autocomplete-list hidden"></div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Meal Type *</label>
+              <select id="mealType" class="form-control" required>
+                <option value="Breakfast">Breakfast</option>
+                <option value="Lunch">Lunch</option>
+                <option value="Dinner">Dinner</option>
+                <option value="Snack">Snack</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Serving Size *</label>
+              <div class="serving-input-group">
+                <input
+                  type="number"
+                  id="servingSize"
+                  class="form-control"
+                  min="0.1"
+                  step="0.1"
+                  value="1"
+                  required
+                />
+                <select id="servingUnit" class="form-control">
+                  <option value="piece">piece</option>
+                  <option value="cup">cup</option>
+                  <option value="g">g</option>
+                  <option value="ml">ml</option>
+                  <option value="slice">slice</option>
+                  <option value="tbsp">tbsp</option>
+                  <option value="tsp">tsp</option>
+                  <option value="oz">oz</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Calories per Serving *</label>
+              <input
+                type="number"
+                id="caloriesPerServing"
+                class="form-control"
+                min="1"
+                required
+              />
+            </div>
+            <div class="form-actions">
+              <button
+                type="button"
+                class="btn btn--secondary"
+                id="cancelFoodBtn"
+              >
+                Cancel
+              </button>
+              <button type="submit" class="btn btn--primary">Add Food</button>
+            </div>
+          </form>
         </div>
-    </div>
+      </div>
 
-    <!-- Custom Food Builder Modal -->
-    <div id="foodBuilderModal" class="modal hidden">
+      <!-- Custom Food Builder Modal -->
+      <div id="foodBuilderModal" class="modal hidden">
         <div class="modal-content large-modal">
-            <h3>Build Custom Food</h3>
-            <form id="foodBuilderForm">
-                <div class="form-group">
-                    <label class="form-label">Custom Food Name *</label>
-                    <input type="text" id="customFoodName" class="form-control" placeholder="e.g., My Chicken Salad" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Meal Type *</label>
-                    <select id="builderMealType" class="form-control" required>
-                        <option value="Breakfast">Breakfast</option>
-                        <option value="Lunch">Lunch</option>
-                        <option value="Dinner">Dinner</option>
-                        <option value="Snack">Snack</option>
-                    </select>
-                </div>
-                
-                <div class="food-builder-section">
-                    <h4>Add Ingredients</h4>
-                    <div class="ingredient-input-row">
-                        <div class="ingredient-select-group">
-                            <label class="form-label">Ingredient *</label>
-                            <select id="ingredientSelect" class="form-control" required>
-                                <option value="">Select ingredient</option>
-                            </select>
-                        </div>
-                        <div class="amount-input-group">
-                            <label class="form-label">Amount *</label>
-                            <input type="number" id="ingredientAmount" class="form-control" min="0.1" step="0.1" placeholder="e.g., 150">
-                            <select id="ingredientUnit" class="form-control">
-                                <option value="g">g</option>
-                                <option value="ml">ml</option>
-                            </select>
-                        </div>
-                        <div class="calories-display-group">
-                            <label class="form-label">Calories</label>
-                            <div id="ingredientCaloriesDisplay" class="calories-display">0 kcal</div>
-                        </div>
-                        <div class="add-ingredient-group">
-                            <button type="button" id="addIngredientToFood" class="btn btn--primary">Add</button>
-                        </div>
-                    </div>
-                </div>
+          <h3>Build Custom Food</h3>
+          <form id="foodBuilderForm">
+            <div class="form-group">
+              <label class="form-label">Custom Food Name *</label>
+              <input
+                type="text"
+                id="customFoodName"
+                class="form-control"
+                placeholder="e.g., My Chicken Salad"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Meal Type *</label>
+              <select id="builderMealType" class="form-control" required>
+                <option value="Breakfast">Breakfast</option>
+                <option value="Lunch">Lunch</option>
+                <option value="Dinner">Dinner</option>
+                <option value="Snack">Snack</option>
+              </select>
+            </div>
 
-                <div class="ingredients-list-section">
-                    <h4>Ingredients in this food</h4>
-                    <div id="selectedIngredientsList" class="selected-ingredients">
-                        <div class="empty-state">No ingredients added yet</div>
-                    </div>
-                    <div class="total-calories-display">
-                        <strong>Total Calories: <span id="totalFoodCalories">0</span> kcal</strong>
-                    </div>
+            <div class="food-builder-section">
+              <h4>Add Ingredients</h4>
+              <div class="ingredient-input-row">
+                <div class="ingredient-select-group">
+                  <label class="form-label">Ingredient *</label>
+                  <select id="ingredientSelect" class="form-control" required>
+                    <option value="">Select ingredient</option>
+                  </select>
                 </div>
+                <div class="amount-input-group">
+                  <label class="form-label">Amount *</label>
+                  <input
+                    type="number"
+                    id="ingredientAmount"
+                    class="form-control"
+                    min="0.1"
+                    step="0.1"
+                    placeholder="e.g., 150"
+                  />
+                  <select id="ingredientUnit" class="form-control">
+                    <option value="g">g</option>
+                    <option value="ml">ml</option>
+                  </select>
+                </div>
+                <div class="calories-display-group">
+                  <label class="form-label">Calories</label>
+                  <div id="ingredientCaloriesDisplay" class="calories-display">
+                    0 kcal
+                  </div>
+                </div>
+                <div class="add-ingredient-group">
+                  <button
+                    type="button"
+                    id="addIngredientToFood"
+                    class="btn btn--primary"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            </div>
 
-                <div class="form-actions">
-                    <button type="button" class="btn btn--secondary" id="cancelFoodBuilderBtn">Cancel</button>
-                    <button type="submit" class="btn btn--primary">Save Custom Food</button>
-                </div>
-            </form>
+            <div class="ingredients-list-section">
+              <h4>Ingredients in this food</h4>
+              <div id="selectedIngredientsList" class="selected-ingredients">
+                <div class="empty-state">No ingredients added yet</div>
+              </div>
+              <div class="total-calories-display">
+                <strong
+                  >Total Calories:
+                  <span id="totalFoodCalories">0</span> kcal</strong
+                >
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button
+                type="button"
+                class="btn btn--secondary"
+                id="cancelFoodBuilderBtn"
+              >
+                Cancel
+              </button>
+              <button type="submit" class="btn btn--primary">
+                Save Custom Food
+              </button>
+            </div>
+          </form>
         </div>
-    </div>
+      </div>
 
-    <!-- Exercise Modal -->
-    <div id="exerciseModal" class="modal hidden">
+      <!-- Exercise Modal -->
+      <div id="exerciseModal" class="modal hidden">
         <div class="modal-content">
-            <h3>Add Exercise</h3>
-            <form id="exerciseForm">
-                <div class="form-group">
-                    <label class="form-label">Exercise *</label>
-                    <select id="exerciseSelect" class="form-control" required>
-                        <option value="">Select exercise</option>
-                        <option value="custom">Custom exercise</option>
-                    </select>
-                    <input type="text" id="customExercise" class="form-control hidden" placeholder="Enter custom exercise name" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Duration (minutes) *</label>
-                    <input type="number" id="exerciseDuration" class="form-control" min="1" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Calories Burned (optional)</label>
-                    <input type="number" id="exerciseCalories" class="form-control" min="1" placeholder="Leave blank for auto-calculation">
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn btn--secondary" id="cancelExerciseBtn">Cancel</button>
-                    <button type="submit" class="btn btn--primary">Add Exercise</button>
-                </div>
-            </form>
+          <h3>Add Exercise</h3>
+          <form id="exerciseForm">
+            <div class="form-group">
+              <label class="form-label">Exercise *</label>
+              <select id="exerciseSelect" class="form-control" required>
+                <option value="">Select exercise</option>
+                <option value="custom">Custom exercise</option>
+              </select>
+              <input
+                type="text"
+                id="customExercise"
+                class="form-control hidden"
+                placeholder="Enter custom exercise name"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Duration (minutes) *</label>
+              <input
+                type="number"
+                id="exerciseDuration"
+                class="form-control"
+                min="1"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Calories Burned (optional)</label>
+              <input
+                type="number"
+                id="exerciseCalories"
+                class="form-control"
+                min="1"
+                placeholder="Leave blank for auto-calculation"
+              />
+            </div>
+            <div class="form-actions">
+              <button
+                type="button"
+                class="btn btn--secondary"
+                id="cancelExerciseBtn"
+              >
+                Cancel
+              </button>
+              <button type="submit" class="btn btn--primary">
+                Add Exercise
+              </button>
+            </div>
+          </form>
         </div>
-    </div>
+      </div>
 
-    <!-- Enhanced Ingredient Modal -->
-    <div id="ingredientModal" class="modal hidden">
+      <!-- Enhanced Ingredient Modal -->
+      <div id="ingredientModal" class="modal hidden">
         <div class="modal-content">
-            <h3 id="ingredientModalTitle">Add Ingredient</h3>
-            <form id="ingredientForm">
-                <div class="form-group">
-                    <label class="form-label">Ingredient Name *</label>
-                    <input type="text" id="ingredientName" class="form-control" required>
+          <h3 id="ingredientModalTitle">Add Ingredient</h3>
+          <form id="ingredientForm">
+            <div class="form-group">
+              <label class="form-label">Ingredient Name *</label>
+              <input
+                type="text"
+                id="ingredientName"
+                class="form-control"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Category *</label>
+              <select id="ingredientCategory" class="form-control" required>
+                <option value="">Select Category</option>
+                <option value="Proteins">Proteins</option>
+                <option value="Carbohydrates">Carbohydrates</option>
+                <option value="Fats">Fats</option>
+                <option value="Vegetables">Vegetables</option>
+                <option value="Fruits">Fruits</option>
+                <option value="Dairy">Dairy</option>
+                <option value="Grains">Grains</option>
+                <option value="Beverages">Beverages</option>
+                <option value="Oils">Oils</option>
+                <option value="Condiments">Condiments</option>
+                <option value="Spices">Spices</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Base Unit *</label>
+              <div class="base-unit-selector">
+                <div class="radio-group">
+                  <label class="radio-label">
+                    <input type="radio" name="baseUnit" value="100g" checked />
+                    <span class="radio-custom"></span>
+                    per 100 grams (recommended for solids)
+                  </label>
+                  <label class="radio-label">
+                    <input type="radio" name="baseUnit" value="100ml" />
+                    <span class="radio-custom"></span>
+                    per 100 milliliters (recommended for liquids)
+                  </label>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Category *</label>
-                    <select id="ingredientCategory" class="form-control" required>
-                        <option value="">Select Category</option>
-                        <option value="Proteins">Proteins</option>
-                        <option value="Carbohydrates">Carbohydrates</option>
-                        <option value="Fats">Fats</option>
-                        <option value="Vegetables">Vegetables</option>
-                        <option value="Fruits">Fruits</option>
-                        <option value="Dairy">Dairy</option>
-                        <option value="Grains">Grains</option>
-                        <option value="Beverages">Beverages</option>
-                        <option value="Oils">Oils</option>
-                        <option value="Condiments">Condiments</option>
-                        <option value="Spices">Spices</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Base Unit *</label>
-                    <div class="base-unit-selector">
-                        <div class="radio-group">
-                            <label class="radio-label">
-                                <input type="radio" name="baseUnit" value="100g" checked>
-                                <span class="radio-custom"></span>
-                                per 100 grams (recommended for solids)
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="baseUnit" value="100ml">
-                                <span class="radio-custom"></span>
-                                per 100 milliliters (recommended for liquids)
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Calories <span id="baseUnitDisplay">per 100g</span> *</label>
-                    <input type="number" id="ingredientCalories" class="form-control" min="1" required>
-                    <small class="form-help">Enter calories for the selected base unit</small>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Protein (g) - Optional</label>
-                    <input type="number" id="ingredientProtein" class="form-control" min="0" step="0.1">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Carbs (g) - Optional</label>
-                    <input type="number" id="ingredientCarbs" class="form-control" min="0" step="0.1">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Fat (g) - Optional</label>
-                    <input type="number" id="ingredientFat" class="form-control" min="0" step="0.1">
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn btn--secondary" id="cancelIngredientBtn">Cancel</button>
-                    <button type="submit" class="btn btn--primary">Save Ingredient</button>
-                </div>
-            </form>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label"
+                >Calories <span id="baseUnitDisplay">per 100g</span> *</label
+              >
+              <input
+                type="number"
+                id="ingredientCalories"
+                class="form-control"
+                min="1"
+                required
+              />
+              <small class="form-help"
+                >Enter calories for the selected base unit</small
+              >
+            </div>
+            <div class="form-group">
+              <label class="form-label">Protein (g) - Optional</label>
+              <input
+                type="number"
+                id="ingredientProtein"
+                class="form-control"
+                min="0"
+                step="0.1"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Carbs (g) - Optional</label>
+              <input
+                type="number"
+                id="ingredientCarbs"
+                class="form-control"
+                min="0"
+                step="0.1"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Fat (g) - Optional</label>
+              <input
+                type="number"
+                id="ingredientFat"
+                class="form-control"
+                min="0"
+                step="0.1"
+              />
+            </div>
+            <div class="form-actions">
+              <button
+                type="button"
+                class="btn btn--secondary"
+                id="cancelIngredientBtn"
+              >
+                Cancel
+              </button>
+              <button type="submit" class="btn btn--primary">
+                Save Ingredient
+              </button>
+            </div>
+          </form>
         </div>
+      </div>
     </div>
 
-    <script src="app.js"></script>
-</body>
+    <script type="module" src="./app.js"></script>
+  </body>
 </html>
