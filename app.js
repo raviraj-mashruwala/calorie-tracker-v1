@@ -98,7 +98,7 @@ class CalorieTracker {
   init() {
     this.setupEventListeners();
     this.populateSelects();
-    this.setCurrentDates();
+    this.setUniversalDate();
     this.loadCurrentProfile();
     this.loadFoodDatabase();
     this.updateUI();
@@ -262,6 +262,21 @@ class CalorieTracker {
 
   // Setup all event listeners
   setupEventListeners() {
+    // ADD THIS NEW EVENT LISTENER:
+    document.getElementById("universalDate").addEventListener("change", (e) => {
+      this.currentDate = e.target.value;
+      this.updateAllViews();
+    });
+
+    // ADD THESE FOR DATE NAVIGATION:
+    document.getElementById("prevDate").addEventListener("click", () => {
+      this.changeDate(-1);
+    });
+
+    document.getElementById("nextDate").addEventListener("click", () => {
+      this.changeDate(1);
+    });
+
     // Navigation tabs
     document.querySelectorAll(".nav-btn").forEach((btn) => {
       btn.addEventListener("click", (e) => {
@@ -318,12 +333,6 @@ class CalorieTracker {
 
     document.getElementById("cancelFoodBtn").addEventListener("click", () => {
       this.hideModal("foodModal");
-    });
-
-    document.getElementById("foodDate").addEventListener("change", (e) => {
-      this.currentDate = e.target.value;
-      this.renderFoodEntries();
-      this.updateDashboard();
     });
 
     // Custom food builder
@@ -388,12 +397,6 @@ class CalorieTracker {
         this.handleExerciseSelection(e.target.value);
       });
 
-    document.getElementById("exerciseDate").addEventListener("change", (e) => {
-      this.currentDate = e.target.value;
-      this.renderExerciseEntries();
-      this.updateDashboard();
-    });
-
     // Enhanced ingredient management
     document
       .getElementById("addIngredientBtn")
@@ -429,10 +432,6 @@ class CalorieTracker {
       });
     });
 
-    document.getElementById("summaryDate").addEventListener("change", (e) => {
-      this.updateSummaryCharts("daily");
-    });
-
     // Modal close on backdrop click
     document.querySelectorAll(".modal").forEach((modal) => {
       modal.addEventListener("click", (e) => {
@@ -458,6 +457,22 @@ class CalorieTracker {
     document.getElementById("signOutBtn").addEventListener("click", () => {
       this.signOutUser();
     });
+  }
+
+  updateAllViews() {
+    // Update all tabs with new date
+    this.renderFoodEntries();
+    this.renderExerciseEntries();
+    this.updateDashboard();
+    this.updateSummaryCharts("daily");
+
+    // Update any other views that depend on date
+    if (this.currentTab === "summary") {
+      this.updateSummaryCharts(
+        document.querySelector(".summary-tab-btn.active")?.dataset.summary ||
+          "daily"
+      );
+    }
   }
 
   // Setup autocomplete functionality
@@ -2075,13 +2090,21 @@ class CalorieTracker {
     });
   }
 
-  // Utility functions
-  setCurrentDates() {
-    const today = new Date().toISOString().split("T")[0];
-    document.getElementById("foodDate").value = today;
-    document.getElementById("exerciseDate").value = today;
-    document.getElementById("summaryDate").value = today;
-    this.currentDate = today;
+  setUniversalDate() {
+    const universalDateInput = document.getElementById("universalDate");
+    if (universalDateInput) {
+      universalDateInput.value = this.currentDate;
+    }
+  }
+
+  // ADD THIS METHOD:
+  changeDate(days) {
+    const currentDate = new Date(this.currentDate);
+    currentDate.setDate(currentDate.getDate() + days);
+    this.currentDate = currentDate.toISOString().split("T")[0];
+
+    document.getElementById("universalDate").value = this.currentDate;
+    this.updateAllViews();
   }
 
   hideModal(modalId) {

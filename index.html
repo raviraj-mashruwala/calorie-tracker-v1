@@ -49,6 +49,24 @@
       <header class="header">
         <div class="container">
           <h1>CalorieTracker Pro</h1>
+          <!-- ADD THIS IN THE HEADER, AFTER THE H1 AND BEFORE HEADER-CONTROLS: -->
+          <div class="universal-date-control">
+            <button type="button" class="date-nav-btn" id="prevDate">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+            </button>
+            <input
+              type="date"
+              id="universalDate"
+              class="form-control date-input"
+            />
+            <button type="button" class="date-nav-btn" id="nextDate">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+          </div>
           <div class="header-controls">
             <select id="profileSelector" class="form-control">
               <option value="">Select Profile</option>
@@ -173,10 +191,6 @@
               </div>
             </div>
 
-            <div class="date-selector">
-              <input type="date" id="foodDate" class="form-control" />
-            </div>
-
             <div class="meals-container">
               <div class="meal-section">
                 <h3>Breakfast</h3>
@@ -226,10 +240,6 @@
               </button>
             </div>
 
-            <div class="date-selector">
-              <input type="date" id="exerciseDate" class="form-control" />
-            </div>
-
             <div class="exercise-list" id="exerciseList">
               <div class="empty-state">No exercises logged today</div>
             </div>
@@ -271,9 +281,6 @@
 
             <div id="dailySummary" class="summary-content active">
               <h3>Daily Summary</h3>
-              <div class="date-selector">
-                <input type="date" id="summaryDate" class="form-control" />
-              </div>
               <div
                 class="chart-container"
                 style="position: relative; height: 300px"
