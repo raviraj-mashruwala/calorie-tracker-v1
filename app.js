@@ -1798,7 +1798,7 @@ class CalorieTracker {
     }
 
     const summaryDate =
-      document.getElementById("summaryDate").value || this.currentDate;
+      document.getElementById("universalDate").value || this.currentDate;
     const consumed = this.getTotalCaloriesConsumed(
       this.currentProfile.id,
       summaryDate
