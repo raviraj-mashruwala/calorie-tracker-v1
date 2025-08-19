@@ -841,7 +841,6 @@ class CalorieTracker {
             document.getElementById('profileAge').value = profile.age;
             document.getElementById('profileWeight').value = profile.weight;
             document.getElementById('profileHeight').value = profile.height;
-            document.getElementById('profileActivity').value = profile.activityLevel;
         } else {
             title.textContent = 'Create Profile';
             form.reset();
@@ -866,7 +865,6 @@ class CalorieTracker {
             age: parseInt(document.getElementById('profileAge').value),
             weight: parseFloat(document.getElementById('profileWeight').value),
             height: parseInt(document.getElementById('profileHeight').value),
-            activityLevel: document.getElementById('profileActivity').value,
             createdAt: this.editingId ? this.data.profiles.find(p => p.id === this.editingId)?.createdAt || new Date().toISOString() : new Date().toISOString()
         };
 
